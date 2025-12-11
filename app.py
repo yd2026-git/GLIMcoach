@@ -1,6 +1,23 @@
 # app.py
 import gradio as gr
 import json, os, uuid, time
+import os
+
+def auto_seed():
+    # Build RAG index if missing
+    if not (os.path.exists("saved_index/faiss.index") and os.path.exists("saved_index/meta.pkl")):
+        print("No RAG index found. Running seed_docs.py to build FAISS index...")
+        import seed_docs  # runs automatically
+
+    # Generate analytics if missing
+    analytics_file = "data/placement_history/analytics_summary.json"
+    if not os.path.exists(analytics_file):
+        print("No analytics summary found. Running analytics.py...")
+        import analytics  # runs automatically
+
+# Run auto build
+auto_seed()
+
 from rag import RAGIndex
 from scorer import generate_structured_feedback
 from resume_matcher import compare_resume_jd
